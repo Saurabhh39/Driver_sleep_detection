@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import dlib 
 from imutils import face_utils
+from pygame import mixer
 
 cap=cv2.VideoCapture(0)
 detector=dlib.get_frontal_face_detector()
 predictor=dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 global sleep
-global drowsy
 global active
 global status
 global color
@@ -18,10 +18,10 @@ def euclideanDistance(a,b):
 def blinked(a,b,c,d,e,f):
     up=euclideanDistance(b,d) + euclideanDistance(c,e)
     down=euclideanDistance(a,f)
-    ratio=up/(down*2.0)
-    if(ratio>0.25):
+    ear=up/(down*2.0)
+    if(ear>0.25):
         return 2
-    elif(ratio<=0.25 and ratio>0.21):
+    elif(ear<=0.25 and ear>0.21):
         return 1
     else:
         return 0
@@ -51,9 +51,10 @@ def landmarks_show():
 
 
 def sleep_detector():
+    mixer.init()
+    sound = mixer.Sound('alarm.wav')
     sleep=0
     active=0
-    drowsy=0
     status=""
     color=(0,0,0)
     while True:
@@ -77,26 +78,21 @@ def sleep_detector():
 
             if(left_blink==0 or right_blink==0):
                 sleep+=1
-                drowsy=0
                 active=0
-                if(sleep>10):
-                    status="SLEEPING!"
-                    color=(255,0,0)
-            elif(left_blink==1 or right_blink==1):
-                sleep=0
-                active=0
-                drowsy=1
-                if(drowsy>6):
-                    status="DROWSY!"
-                    status=(0,0,255)
+                if(sleep>15):
+                    status="YOU ARE SLEEPING!"
+                    color=(0,0,255)
+                    try:
+                        sound.play()
+                    except:
+                        pass
             else:
                 sleep=0
-                drowsy=0
                 active+=1
-                if(active>10):
+                if(active>15):
                     status="YOU ARE ACTIVE"
                     color=(0,255,0)
-            cv2.putText(frame,status,(100,100),cv2.FONT_HERSHEY_COMPLEX,1.2,color,3)
+            cv2.putText(frame,status,(100,100),cv2.FONT_HERSHEY_COMPLEX,1.2,color,2)
         cv2.imshow("Face Detection",frame)
         key=cv2.waitKey(1)
         if key==27:

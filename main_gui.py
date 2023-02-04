@@ -7,19 +7,12 @@ root.title("Driver Sleepiness Detector")
 root.minsize(width=500,height=500)
 root.geometry("600x500")
 
-background_image =Image.open("bg_img.jpg")
-#[imageSizeWidth, imageSizeHeight] = background_image.size
-
-#newImageSizeWidth = int(imageSizeWidth*2.5)
-#newImageSizeHeight = int(imageSizeHeight*2.5) 
-        
-#background_image = background_image.resize((newImageSizeWidth,newImageSizeHeight),Image.ANTIALIAS)
+background_image =Image.open("bg-img.jpg")
 img = ImageTk.PhotoImage(background_image)
 
 Canvas1 = Canvas(root)
 
 Canvas1.create_image(300,340,image = img)      
-#Canvas1.config(bg="white",width = newImageSizeWidth, height = newImageSizeHeight)
 Canvas1.pack(expand=True,fill=BOTH)
 
 headingFrame1 = Frame(root,bg="#FFBB00",bd=5)
